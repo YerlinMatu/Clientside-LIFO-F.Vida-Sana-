@@ -1,5 +1,5 @@
 # ESTRUCTURA DE DATOS DE TIPO LIFO
-# Taller estructura de datos : Comportamiento de una cola | Interfaz gráfica React
+# Taller estructura de datos : Comportamiento de una pila | Interfaz gráfica React
 # Por : Yerlinson Maturana 
 # @Uniclaretiana
 
