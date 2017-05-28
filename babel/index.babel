@@ -1,0 +1,239 @@
+/*
+  Escrito por : Yerlinson Maturana (Matu Creativo).
+  Email: yerlinmatu@gmail.com
+  Github: https://github.com/YerlinMatu
+  Twitter: @yerlinmatu 
+*/
+
+// USUARIO
+let Aportante = [];
+let Total_aportes = 0;
+class Usuario{
+   constructor(nombre, apellidos, telefono, cedula, aporte){ 
+      this.nombre = (nombre.length != 0) ? nombre.Capitalize() : "Anonimo ".concat(cont++);
+      this.apellidos = apellidos.trim().Capitalize() || "Sin apellidos";
+      this.telefono = +Math.abs(telefono);
+      this.cedula = Math.abs(cedula) || 0;
+      this.aporte = parseFloat(+aporte) || 0; 
+      Total_aportes += (this.aporte);
+   }
+}
+
+// Capitalizado : 
+String.prototype.Capitalize = function(){
+   return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+//  cont++
+let cont = 1; 
+
+function SendData(){
+let n = $("#nombre").val(),
+    a = $("#apellidos").val(),
+    t = $("#telefono").val(),
+    cc = parseInt($("#cedula").val()),
+    v = $("#aporte").val()
+if((n !== '') && (a !== '') && (t !== '') && (cc !== '') && (v !== '')){
+    var person = new Usuario(n,a,t,cc, v);
+    let nameTemp = person.nombre;
+    Aportante.push(person);
+    console.log(Aportante);
+    $Dom('formID').reset(); // Reseting.
+    SucessMsg(`Se registró ${nameTemp} correctamente`, 'Ya se ingreso a la base de datos.', 2500);
+} else {
+    SucessMsg('Por favor ingrese los datos solicitados :(','Los campos están vacios', 2500)
+  } 
+     
+} // Client send.
+
+function $Dom($id){
+   return document.getElementById($id);
+}
+const question = ["¿Cuál es su nombre?","¿Cuáles son sus apellidos?","Número telefónonico","Número de cédula", "Valor a aportar"];
+
+let DeleteAportante = () => {
+  if(Aportante.length > 0 ){
+    let user_despachado = Aportante.pop();
+    user_despachado = user_despachado.nombre;
+    ViewTabla();
+    SucessMsg(`El aportante ${user_despachado} se eliminó exitosamente`,'Puede seguir registrando');
+  } else {
+      SucessMsg(`No hay aportantes registrados`,'Puede seguir registrando');
+  }
+}
+// Busqueda. 
+let SearchAportante = ()=>{ 
+  
+  let user_req =$('#searching').val().trim().Capitalize();
+   Aportante.map(user=>{
+     if((user.nombre === user_req) || (user.apellidos === user_req) || (user.telefono === user_req)) {
+      return  SucessMsg(`
+              Nombre: ${user.nombre}
+              Apellidos: ${user.apellidos}\n
+              Teléfono: ${user.telefono}\n
+              cc: ${user.cedula}\n
+                `, '', 5000);
+
+
+      }else {
+       return swal({
+          title: `No existe ${user_req} aportante`,
+          text: `${user_req} no sé registró`,
+          type: "error",
+          confirmButtonText: "Cerrar",
+          confirmButtonColor:'#490a3d'
+        });
+      }
+   })
+}
+
+// FORMULARIO.
+let FormRegistro = React.createClass({
+    render:()=>{
+       return (
+         <div className="Formulario">
+           <h2>
+             <i className="fa fa-address-book" aria-hidden="true"></i> Registro 
+           </h2>
+           <form id="formID">
+            <label for="nombre">Nombre</label>
+            <input type="text" placeholder={question[0]} id="nombre" required/>
+            <label for="apellidos">Apellidos</label>
+            <input type="text" placeholder={question[1]} id="apellidos" required/>
+             <label for="telefono">Teléfono</label>
+            <input type="number" placeholder={question[2]} id="telefono" min="7" max="10" required/>
+            <label for="cedula">Cédula</label>
+          <input type="number" min="1" max="10" placeholder={question[3]} id="cedula" readonly="readonly" required="required"/>
+            <label for="Valor a aportar">Dinero</label>
+          <input type="number" min="1" max="10" placeholder={question[4]} id="aporte" readonly="readonly" required="required"/>
+             <button className="btn" type="button" onClick={ SendData }>
+               <i className="fa fa fa-plus" aria-hidden="true"></i> Registrar</button>
+             <button className="btn" type="button" onClick={ ViewTabla }>
+               <i className="fa fa fa fa-database" aria-hidden="true"></i> Ver registrados</button>
+          </form>
+         </div>
+       )
+    }
+});
+
+//  DATAGRIV:
+class DataGriv extends React.Component {
+  constructor(props){
+     super(props);
+     this.state = {
+        User:Aportante
+     }
+  }
+render(){
+ var data = this.state.User.map((Aportante, i)=>{
+      return (
+        <tr key={i}>
+          <th>{ Aportante.nombre }</th>
+          <th>{ Aportante.apellidos }</th>
+          <th>{ Aportante.telefono }</th>
+          <th>{ Aportante.cedula }</th>
+          <th>{ Aportante.aporte }</th>
+        </tr>)
+        })
+return(
+  <div className="Formulario Griv">
+    <h2><i className="fa fa-database" aria-hidden="true"></i> Datos en Pila </h2>
+    <label for="search"><i className="fa fa-search" aria-hidden="true"></i> Buscador</label>
+  <input id="searching"  type="search" placeholder="Buscar por nombre..."/>
+<div class="container" >
+<strong className="cont"><i className="fa fa-user" aria-hidden="true"></i> Aportantes :  { data.length }</strong>
+  <strong className="cont2"><i className="fa fa-money" aria-hidden="true"></i>   Dinero : ${ Total_aportes }</strong>
+  <table id="table">
+  <thead>
+    <tr>
+      <th>
+      <strong>
+        <i className="fa fa-user" aria-hidden="true"> </i>
+          Nombre
+      </strong>
+      </th>
+      <th>
+        <strong>
+          <i className="fa fa-users" aria-hidden="true"> </i>
+            Apellidos
+        </strong>
+      </th>
+      <th>
+        <strong>
+         <i className="fa fa-phone" aria-hidden="true"></i>
+            Teléfono
+        </strong>
+      </th>
+      <th>
+        <strong>
+        <i className="fa fa-id-card" aria-hidden="true"></i>
+            Cédula
+        </strong>
+      </th>
+         <th>
+        <strong>
+       <i className="fa fa-credit-card-alt" aria-hidden="true"></i>
+            Aporte
+        </strong>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+     { data }
+  </tbody>
+</table>
+  </div>
+<PadButton />
+</div>
+      ) // end render.
+    }
+};
+
+var PadButton = React.createClass({
+    render:()=>{
+      return (
+        <div className="container">
+          <div className="row">
+            
+            <div className="colum">
+             <button className="btn" onClick={ SearchAportante }>
+              <i className="fa fa fa fa-search" aria-hidden="true">
+              </i> Buscar</button>
+              <button className="btn" onClick={ ViewRegistro }>
+                <i className="fa fa fa fa-plus" aria-hidden="true">
+                </i> Registrar</button>
+              <button className="btn" onClick={ DeleteAportante }>
+                <i className="fa fa fa fa-trash" aria-hidden="true">
+                </i> Eliminar en pila</button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+})
+/* RENDERS URLS */
+GlobalRenderID(<FormRegistro/>, 'app');
+
+function ViewTabla(){
+  return GlobalRenderID(<DataGriv/>, 'app');
+}
+
+function ViewRegistro(){
+  return GlobalRenderID(<FormRegistro/>, 'app');
+}
+// Renderizador Global.
+function GlobalRenderID($ComponentTag, $element){
+  return ReactDOM.render($ComponentTag,
+  document.getElementById($element));
+}
+
+function SucessMsg(title, msg, time, btnBool){
+  swal({
+  title: title,
+  text: msg,
+  timer: time || 1600,
+  showConfirmButton: btnBool || false
+});
+}
+
+
